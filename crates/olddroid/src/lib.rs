@@ -1,6 +1,4 @@
-use droidcore_emulator::{
-    EmulatorConfig, ExecutionMode, GuestArchitecture,
-};
+use droidcore_emulator::{EmulatorConfig, ExecutionMode, GuestArchitecture};
 
 pub const MIN_ANDROID_API: u32 = 4;
 pub const MAX_ANDROID_API: u32 = 21;
@@ -233,7 +231,9 @@ impl OldDroid {
             return NativeCodePath::GuestNative;
         }
 
-        if abis.iter().any(|abi| matches!(*abi, NativeAbi::Armeabi | NativeAbi::ArmeabiV7a))
+        if abis
+            .iter()
+            .any(|abi| matches!(*abi, NativeAbi::Armeabi | NativeAbi::ArmeabiV7a))
             && matches!(
                 self.config.guest_architecture,
                 GuestArchitecture::X86 | GuestArchitecture::X86_64
@@ -277,10 +277,22 @@ mod tests {
 
     #[test]
     fn maps_supported_android_api_levels() {
-        assert_eq!(AndroidRelease::from_api_level(4), Some(AndroidRelease::Donut));
-        assert_eq!(AndroidRelease::from_api_level(8), Some(AndroidRelease::Froyo));
-        assert_eq!(AndroidRelease::from_api_level(19), Some(AndroidRelease::KitKat));
-        assert_eq!(AndroidRelease::from_api_level(21), Some(AndroidRelease::Lollipop));
+        assert_eq!(
+            AndroidRelease::from_api_level(4),
+            Some(AndroidRelease::Donut)
+        );
+        assert_eq!(
+            AndroidRelease::from_api_level(8),
+            Some(AndroidRelease::Froyo)
+        );
+        assert_eq!(
+            AndroidRelease::from_api_level(19),
+            Some(AndroidRelease::KitKat)
+        );
+        assert_eq!(
+            AndroidRelease::from_api_level(21),
+            Some(AndroidRelease::Lollipop)
+        );
         assert_eq!(AndroidRelease::from_api_level(22), None);
     }
 
