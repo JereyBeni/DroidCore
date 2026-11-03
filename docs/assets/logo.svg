@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" role="img" aria-labelledby="title desc">
+  <title id="title">DroidCore</title>
+  <desc id="desc">DroidCore logo: the icon followed by the wordmark, on a dark background, in 16:9.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0F1B26"/>
+      <stop offset="1" stop-color="#070D13"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#bg)"/>
+  <!-- Icon, scaled to 300px and centered vertically -->
+  <g transform="translate(180 210) scale(0.586)">
+    <rect x="16" y="16" width="480" height="480" rx="110" fill="#14222F"/>
+    <path d="M176 210 A80 80 0 0 1 336 210 Z" fill="#3DDC84"/>
+    <rect x="164" y="222" width="184" height="150" rx="28" fill="#3DDC84"/>
+    <rect x="136" y="232" width="24" height="100" rx="12" fill="#3DDC84"/>
+    <rect x="352" y="232" width="24" height="100" rx="12" fill="#3DDC84"/>
+    <rect x="200" y="372" width="28" height="70" rx="14" fill="#3DDC84"/>
+    <rect x="284" y="372" width="28" height="70" rx="14" fill="#3DDC84"/>
+    <g transform="translate(390 120)">
+      <circle r="62" fill="#DEA584"/>
+      <circle r="26" fill="#14222F"/>
+      <g fill="#DEA584">
+        <rect x="-14" y="-82" width="28" height="36" rx="6"/>
+        <rect x="-14" y="46" width="28" height="36" rx="6"/>
+        <rect x="-82" y="-14" width="36" height="28" rx="6"/>
+        <rect x="46" y="-14" width="36" height="28" rx="6"/>
+      </g>
+    </g>
+  </g>
+  <!-- Wordmark -->
+  <text x="540" y="380" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="120" font-weight="700" fill="#FFFFFF">DroidCore</text>
+  <text x="544" y="440" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="30" font-weight="400" fill="#8FA6B8" letter-spacing="1">An original Android game emulator in Rust</text>
+</svg>
