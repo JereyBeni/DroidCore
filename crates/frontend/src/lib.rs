@@ -1,43 +1,43 @@
 use std::path::PathBuf;
 
-use droidcore_apk::{inspect_apk, ApkInfo};
+use droidcore_apk::{inspect_package, PackageInfo, PackagePlatform};
 use eframe::egui;
 
 #[derive(Default)]
 pub struct DroidCoreApp {
     selected_path: Option<PathBuf>,
-    apk_info: Option<ApkInfo>,
+    package_info: Option<PackageInfo>,
     status: String,
 }
 
 impl DroidCoreApp {
     pub fn new(_cc: &eframe::CreationContext<'_>) -> Self {
         Self {
-            status: "Ready. Select an APK to inspect its contents.".to_owned(),
+            status: "Ready. Select an APK or IPA package to inspect.".to_owned(),
             ..Default::default()
         }
     }
 
-    fn open_apk(&mut self) {
+    fn open_package(&mut self) {
         let Some(path) = rfd::FileDialog::new()
-            .add_filter("Android application package", &["apk"])
+            .add_filter("Android APK / Apple IPA", &["apk", "ipa"])
             .pick_file()
         else {
             return;
         };
 
         self.selected_path = Some(path.clone());
-        match inspect_apk(&path) {
+        match inspect_package(&path) {
             Ok(info) => {
                 self.status = format!(
-                    "Inspection complete: {} archive entries found.",
-                    info.entries
+                    "{} inspection complete: {} archive entries found.",
+                    info.platform, info.entries
                 );
-                self.apk_info = Some(info);
+                self.package_info = Some(info);
             }
             Err(error) => {
-                self.status = format!("Inspection failed: {error}");
-                self.apk_info = None;
+                self.status = format!("Package inspection failed: {error}");
+                self.package_info = None;
             }
         }
     }
@@ -49,10 +49,10 @@ impl eframe::App for DroidCoreApp {
             ui.horizontal(|ui| {
                 ui.heading("DroidCore");
                 ui.separator();
-                ui.label("Android package inspector");
+                ui.label("APK / IPA package inspector");
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                    if ui.button("Open APK").clicked() {
-                        self.open_apk();
+                    if ui.button("Open package").clicked() {
+                        self.open_package();
                     }
                 });
             });
@@ -64,21 +64,43 @@ impl eframe::App for DroidCoreApp {
             ui.label(&self.status);
             ui.add_space(12.0);
 
-            if let Some(info) = &self.apk_info {
-                egui::Grid::new("apk_summary").striped(true).show(ui, |ui| {
+            if let Some(info) = &self.package_info {
+                egui::Grid::new("package_summary").striped(true).show(ui, |ui| {
+                    ui.label("Platform");
+                    ui.label(info.platform.to_string());
+                    ui.end_row();
+
                     ui.label("File");
                     ui.monospace(info.path.file_name().unwrap_or_default().to_string_lossy());
                     ui.end_row();
 
-                    ui.label("Package name");
-                    ui.monospace(info.package_name.as_deref().unwrap_or("Unavailable (binary manifest)"));
+                    ui.label("Package / Bundle ID");
+                    ui.monospace(info.package_name.as_deref().unwrap_or("Unavailable"));
                     ui.end_row();
 
-                    ui.label("File size");
+                    if let Some(display_name) = &info.display_name {
+                        ui.label("Display name");
+                        ui.label(display_name);
+                        ui.end_row();
+                    }
+
+                    if let Some(version) = &info.version {
+                        ui.label("Version");
+                        ui.label(version);
+                        ui.end_row();
+                    }
+
+                    if let Some(minimum_os) = &info.minimum_os_version {
+                        ui.label("Minimum OS version");
+                        ui.label(minimum_os);
+                        ui.end_row();
+                    }
+
+                    ui.label("Package size");
                     ui.label(format_bytes(info.file_size));
                     ui.end_row();
 
-                    ui.label("Manifest");
+                    ui.label("Manifest / Info.plist");
                     ui.label(info.manifest_kind.to_string());
                     ui.end_row();
 
@@ -90,53 +112,67 @@ impl eframe::App for DroidCoreApp {
                     ui.label(format_bytes(info.total_uncompressed_size));
                     ui.end_row();
 
-                    ui.label("Asset files");
+                    ui.label("Localized languages");
+                    ui.label(if info.languages.is_empty() {
+                        "Not detected".to_owned()
+                    } else {
+                        info.languages.join(", ")
+                    });
+                    ui.end_row();
+
+                    ui.label("Resource files");
                     ui.label(info.asset_count.to_string());
                     ui.end_row();
                 });
 
-                ui.add_space(16.0);
-                ui.heading(format!("DEX files ({})", info.dex_files.len()));
-                if info.dex_files.is_empty() {
-                    ui.label("No DEX files found.");
-                } else {
-                    for dex in &info.dex_files {
-                        ui.monospace(dex);
+                if info.platform == PackagePlatform::Android {
+                    ui.add_space(16.0);
+                    ui.heading(format!("DEX files ({})", info.dex_files.len()));
+                    if info.dex_files.is_empty() {
+                        ui.label("No DEX files found.");
+                    } else {
+                        for dex in &info.dex_files {
+                            ui.monospace(dex);
+                        }
                     }
-                }
 
-                ui.add_space(12.0);
-                ui.heading(format!("Native libraries ({})", info.native_libraries.len()));
-                if info.native_libraries.is_empty() {
-                    ui.label("No native .so libraries found.");
-                } else {
-                    egui::ScrollArea::vertical().max_height(220.0).show(ui, |ui| {
-                        egui::Grid::new("native_libraries").striped(true).show(ui, |ui| {
-                            ui.strong("ABI");
-                            ui.strong("Library");
-                            ui.strong("Size");
-                            ui.end_row();
-                            for library in &info.native_libraries {
-                                ui.monospace(&library.abi);
-                                ui.monospace(&library.file_name);
-                                ui.label(format_bytes(library.size));
+                    ui.add_space(12.0);
+                    ui.heading(format!("Native libraries ({})", info.native_libraries.len()));
+                    if info.native_libraries.is_empty() {
+                        ui.label("No native .so libraries found.");
+                    } else {
+                        egui::ScrollArea::vertical().max_height(220.0).show(ui, |ui| {
+                            egui::Grid::new("native_libraries").striped(true).show(ui, |ui| {
+                                ui.strong("ABI");
+                                ui.strong("Library");
+                                ui.strong("Size");
                                 ui.end_row();
-                            }
+                                for library in &info.native_libraries {
+                                    ui.monospace(&library.abi);
+                                    ui.monospace(&library.file_name);
+                                    ui.label(format_bytes(library.size));
+                                    ui.end_row();
+                                }
+                            });
                         });
-                    });
+                    }
+                } else {
+                    ui.add_space(12.0);
+                    ui.label("IPA inspection reads package metadata and localized resources.");
+                    ui.label("iOS execution and Mach-O CPU analysis are not implemented.");
                 }
 
                 ui.add_space(12.0);
-                ui.label("This tool inspects APK archives. It does not execute Android applications.");
+                ui.label("Package inspection only. This build does not execute Android or iOS apps.");
             } else {
                 ui.group(|ui| {
                     ui.vertical_centered(|ui| {
                         ui.add_space(36.0);
-                        ui.heading("No APK loaded");
-                        ui.label("Choose an .apk file to inspect its manifest, DEX files and native ABIs.");
+                        ui.heading("No package loaded");
+                        ui.label("Choose an .apk or .ipa file to inspect package metadata and languages.");
                         ui.add_space(16.0);
-                        if ui.button("Browse for APK...").clicked() {
-                            self.open_apk();
+                        if ui.button("Browse for package...").clicked() {
+                            self.open_package();
                         }
                         ui.add_space(28.0);
                     });
@@ -148,7 +184,7 @@ impl eframe::App for DroidCoreApp {
             ui.horizontal(|ui| {
                 ui.small("DroidCore 0.1.0");
                 ui.separator();
-                ui.small("Early development build · No Android runtime yet");
+                ui.small("Early development build · Package inspection only");
             });
         });
     }
