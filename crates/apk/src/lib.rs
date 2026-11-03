@@ -1,4 +1,8 @@
-use std::{fs::File, io, path::{Path, PathBuf}};
+use std::{
+    fs::File,
+    io,
+    path::{Path, PathBuf},
+};
 
 use zip::ZipArchive;
 
@@ -60,16 +64,23 @@ impl std::fmt::Display for ApkError {
 impl std::error::Error for ApkError {}
 
 impl From<io::Error> for ApkError {
-    fn from(value: io::Error) -> Self { Self::Io(value) }
+    fn from(value: io::Error) -> Self {
+        Self::Io(value)
+    }
 }
 
 impl From<zip::result::ZipError> for ApkError {
-    fn from(value: zip::result::ZipError) -> Self { Self::InvalidArchive(value) }
+    fn from(value: zip::result::ZipError) -> Self {
+        Self::InvalidArchive(value)
+    }
 }
 
 pub fn inspect_apk(path: impl AsRef<Path>) -> Result<ApkInfo, ApkError> {
     let path = path.as_ref();
-    if !path.extension().is_some_and(|ext| ext.eq_ignore_ascii_case("apk")) {
+    if !path
+        .extension()
+        .is_some_and(|ext| ext.eq_ignore_ascii_case("apk"))
+    {
         return Err(ApkError::NotApk);
     }
 
