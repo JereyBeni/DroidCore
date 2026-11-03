@@ -1,0 +1,12 @@
+[package]
+name = "droidcore-olddroid"
+description = "Legacy Android 1.6 to 5.0 hybrid compatibility planner."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+droidcore-emulator = { workspace = true }
