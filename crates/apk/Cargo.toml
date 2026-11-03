@@ -1,6 +1,6 @@
 [package]
 name = "droidcore-apk"
-description = "APK archive inspection and package metadata."
+description = "Android APK and Apple IPA archive inspection and package metadata."
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
