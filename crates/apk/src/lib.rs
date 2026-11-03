@@ -151,7 +151,9 @@ fn extract_package_attribute(xml: &str) -> Option<String> {
     let marker = "package=";
     let value_start = tag.find(marker)? + marker.len();
     let quote = tag.as_bytes().get(value_start).copied()?;
-    if quote != b'\'' && quote != b'"' { return None; }
+    if quote != b'\\'' && quote != b'"' {
+        return None;
+    }
     let value = &tag[value_start + 1..];
     let end = value.find(quote as char)?;
     Some(value[..end].to_owned())
