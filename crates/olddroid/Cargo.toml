@@ -9,4 +9,5 @@ repository.workspace = true
 authors.workspace = true
 
 [dependencies]
+droidcore-apk = { workspace = true }
 droidcore-emulator = { workspace = true }
