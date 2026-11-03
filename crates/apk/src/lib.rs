@@ -223,12 +223,13 @@ fn inspect_archive(path: &Path, platform: PackagePlatform) -> Result<PackageInfo
                             }
                         }
                     }
-                } else if name.starts_with("Payload/") && name.contains(".app/") {
-                    asset_count += usize::from(
-                        name.ends_with(".strings")
-                            || name.ends_with(".storyboardc")
-                            || name.ends_with(".nib"),
-                    );
+                } else if name.starts_with("Payload/")
+                    && name.contains(".app/")
+                    && (name.ends_with(".strings")
+                        || name.ends_with(".storyboardc")
+                        || name.ends_with(".nib"))
+                {
+                    asset_count += 1;
                 }
             }
         }
@@ -413,7 +414,10 @@ mod tests {
             android_locale_from_path("res/values-b+zh+Hans+CN/strings.xml"),
             Some("zh-Hans-CN".to_owned())
         );
-        assert_eq!(android_locale_from_path("res/values-night/styles.xml"), None);
+        assert_eq!(
+            android_locale_from_path("res/values-night/styles.xml"),
+            None
+        );
     }
 
     #[test]
