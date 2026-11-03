@@ -1,0 +1,11 @@
+[package]
+name = "droidcore-android-runtime"
+description = "Android execution environment: loader, process model and system services."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]

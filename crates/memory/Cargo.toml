@@ -1,0 +1,11 @@
+[package]
+name = "droidcore-memory"
+description = "Guest memory management and address translation."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]

@@ -1,0 +1,11 @@
+[package]
+name = "droidcore-compatibility"
+description = "Android API compatibility layer and per-app quirks."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]

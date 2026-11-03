@@ -1,0 +1,46 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/droidcore",
+    "crates/emulator",
+    "crates/cpu",
+    "crates/memory",
+    "crates/android_runtime",
+    "crates/graphics",
+    "crates/input",
+    "crates/audio",
+    "crates/apk",
+    "crates/compatibility",
+    "crates/frontend",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/JereyBeni/droidcore"
+authors = ["JereyBeni"]
+
+[workspace.dependencies]
+# Internal crates
+droidcore-emulator = { path = "crates/emulator" }
+droidcore-cpu = { path = "crates/cpu" }
+droidcore-memory = { path = "crates/memory" }
+droidcore-android-runtime = { path = "crates/android_runtime" }
+droidcore-graphics = { path = "crates/graphics" }
+droidcore-input = { path = "crates/input" }
+droidcore-audio = { path = "crates/audio" }
+droidcore-apk = { path = "crates/apk" }
+droidcore-compatibility = { path = "crates/compatibility" }
+droidcore-frontend = { path = "crates/frontend" }
+
+# Shared external dependencies (added only when technically necessary)
+serde = { version = "1", features = ["derive"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1

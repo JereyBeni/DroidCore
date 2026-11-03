@@ -1,0 +1,25 @@
+# Rust build output
+/target/
+**/*.rs.bk
+
+# Cargo lock: keep for the binary workspace
+# (Cargo.lock is intentionally tracked.)
+
+# Editors and OS files
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Local Android/APK test data (never commit copyrighted apps or firmware)
+*.apk
+*.xapk
+*.obb
+/testdata/private/
+/local/
+
+# Environment and secrets
+.env
+*.pem
+*.key

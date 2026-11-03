@@ -1,0 +1,19 @@
+[package]
+name = "droidcore"
+description = "DroidCore main application"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+[dependencies]
+droidcore-frontend = { workspace = true }
+droidcore-emulator = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+
+[[bin]]
+name = "droidcore"
+path = "src/main.rs"
