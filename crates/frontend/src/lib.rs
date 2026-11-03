@@ -29,7 +29,10 @@ impl DroidCoreApp {
         self.selected_path = Some(path.clone());
         match inspect_apk(&path) {
             Ok(info) => {
-                self.status = format!("Inspection complete: {} archive entries found.", info.entries);
+                self.status = format!(
+                    "Inspection complete: {} archive entries found.",
+                    info.entries
+                );
                 self.apk_info = Some(info);
             }
             Err(error) => {
