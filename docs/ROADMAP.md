@@ -4,72 +4,66 @@ This roadmap is built incrementally. Each stage must be complete, tested, and
 honest about its limits before the next one starts. No stage may introduce fake
 emulation or claim Android compatibility it does not have.
 
-## Stage 1 — Workspace and project structure (current)
+## Stage 1 — Workspace and project structure
 
-- Cargo workspace with all crates (`droidcore`, `emulator`, `cpu`, `memory`,
-  `android_runtime`, `graphics`, `input`, `audio`, `apk`, `compatibility`,
-  `frontend`).
-- README, LICENSE (MIT and Apache-2.0), CONTRIBUTING, `.gitignore`.
-- GitHub Actions CI on Windows and Linux: format, clippy, build, test.
-- **Done when:** `cargo build --workspace` and `cargo test --workspace` pass in
-  CI.
+- Cargo workspace, project documentation, dual MIT/Apache-2.0 license.
+- GitHub Actions CI on Windows and Linux.
+- **Done when:** workspace formatting, build and tests pass in CI.
 
-## Stage 2 — Original egui desktop interface
+## Stage 2 — Desktop interface and APK inspection (in progress)
 
-- Main window with an original layout (library, settings, performance panel).
-- Landscape and portrait preview switch (UI only).
-- Configurable controls screen (stored with serde, no emulation behind it).
-- **Done when:** the app opens, navigates between views, and persists settings.
+- Original egui desktop window.
+- Select an APK and inspect its ZIP entries, DEX files and native libraries.
+- Parse binary Android XML and extract SDK/package metadata.
+- **Done when:** APK metadata is tested against known fixtures.
 
-## Stage 3 — APK parser and inspector
+## Stage 3 — Emulator orchestration (implemented, backend pending)
 
-- Read the APK as a ZIP archive and parse `AndroidManifest.xml` (binary XML).
-- List package name, version, minimum and target SDK, permissions, and
-  native libraries.
-- Detect ABIs (`lib/armeabi-v7a`, `lib/arm64-v8a`).
-- **Done when:** the inspector reads a set of test APKs (created in-repo or
-  with permission) and reports correct metadata, verified by tests.
+- Backend-neutral emulator configuration with memory and vCPU validation.
+- Explicit lifecycle: created, starting, running, paused, stopping, stopped
+  and failed.
+- Backend capability checks and error propagation.
+- **Done when:** lifecycle tests pass. This does not yet emulate CPU
+  instructions or boot Android.
 
-## Stage 4 — CPU and architecture detection
+## Stage 4 — OldDroid legacy hybrid profile (planner implemented)
 
-- Identify the guest architecture from the APK and native libraries (ARM and
-  ARM64 ELF headers).
-- Report unsupported architectures explicitly.
-- **Done when:** detection is covered by unit tests using real ELF headers.
+- Cover Android API 4 through API 21 (Android 1.6 through 5.0).
+- Select Dalvik for API 4-20 and ART for API 21.
+- Plan the Android guest system, native ABI path and OpenGL ES bridge.
+- Mark ARM translation and the full-system backend as unavailable until they
+  are implemented.
+- **Done when:** API selection and ABI routing are tested, then real legacy
+  guest images boot in a full-system backend.
 
-## Stage 5 — Emulator foundation
+## Stage 5 — CPU, memory and native translation
 
-- Guest memory model with address translation (`memory`).
-- Emulation orchestration skeleton (`emulator`) that starts and stops cleanly.
-- Instruction decoding for a small, tested ARM subset, verified against
-  reference test vectors.
-- **Done when:** the emulator runs synthetic code sequences with correct
-  results. No Android app is expected to run yet.
+- Guest memory model with address translation.
+- ARM/ARM64 instruction decoding and execution with reference test vectors.
+- ARM native-code translation for ARM-only games on x86 Android guests.
+- **Done when:** deterministic CPU/memory tests pass and a legal guest userspace
+  runs without host escape.
 
-## Stage 6 — Graphics backend
+## Stage 6 — Graphics, input and audio
 
-- wgpu rendering surface integrated into the egui window.
-- OpenGL ES command translation (`graphics`) tested with synthetic draw calls.
-- Performance monitor (frame time, GPU memory) for the GT 710.
-- **Done when:** synthetic OpenGL ES triangles render correctly on the target.
+- wgpu rendering surface integrated into egui.
+- OpenGL ES 1.x/2.0 compatibility for the legacy profile.
+- Touch, keyboard, mouse and audio device bridges.
+- **Done when:** synthetic graphics and input/audio tests pass on the target.
 
 ## Stage 7 — Android runtime integration
 
-- Process and loader model (`android_runtime`).
-- Minimal Android API compatibility surface (`compatibility`) driven by real
-  failing calls, not guesses.
-- Input (`input`) for touch simulation, and audio (`audio`) output.
-- **Done when:** a simple, legally distributable test application starts and
-  reaches its first frame.
+- Full Android system image boot and process/loader model.
+- Dalvik and ART guest runtime profiles.
+- Android API compatibility driven by real failing calls.
+- **Done when:** a legally distributable test application starts and reaches
+  its first frame.
 
 ## Stage 8 — Actual APK execution
 
 - Run real applications, one at a time, and record results.
-- Document each application's status honestly (works, partial, fails) with
-  logs.
-- Compatibility claims are published only after testing.
-- **Done when:** at least one real application runs end to end and its result
-  is documented with reproducible steps.
+- Document each application's status (works, partial, fails) with logs.
+- Publish compatibility claims only after reproducible testing.
 
 ## Ongoing
 
