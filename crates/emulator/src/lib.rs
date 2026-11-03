@@ -211,7 +211,10 @@ impl<B: EmulationBackend> Emulator<B> {
     }
 
     pub fn start(&mut self) -> Result<(), EmulatorError> {
-        self.require_state(EmulatorAction::Start, &[EmulatorState::Created, EmulatorState::Stopped])?;
+        self.require_state(
+            EmulatorAction::Start,
+            &[EmulatorState::Created, EmulatorState::Stopped],
+        )?;
         self.state = EmulatorState::Starting;
 
         match self.backend.start(&self.config) {
@@ -320,11 +323,7 @@ impl<B: EmulationBackend> Emulator<B> {
 mod tests {
     use super::*;
 
-    #[derive(Default)]
-    struct TestBackend {
-        started: bool,
-        paused: bool,
-    }
+    struct TestBackend;
 
     impl EmulationBackend for TestBackend {
         fn name(&self) -> &str {
@@ -336,31 +335,26 @@ mod tests {
         }
 
         fn start(&mut self, _config: &EmulatorConfig) -> Result<(), BackendError> {
-            self.started = true;
-            self.paused = false;
             Ok(())
         }
 
         fn pause(&mut self) -> Result<(), BackendError> {
-            self.paused = true;
             Ok(())
         }
 
         fn resume(&mut self) -> Result<(), BackendError> {
-            self.paused = false;
             Ok(())
         }
 
         fn shutdown(&mut self) -> Result<(), BackendError> {
-            self.started = false;
-            self.paused = false;
             Ok(())
         }
     }
 
     #[test]
     fn lifecycle_moves_through_running_paused_and_stopped() {
-        let mut emulator = Emulator::new(EmulatorConfig::default(), TestBackend::default()).unwrap();
+        let mut emulator =
+            Emulator::new(EmulatorConfig::default(), TestBackend::default()).unwrap();
 
         assert_eq!(emulator.state(), EmulatorState::Created);
         emulator.start().unwrap();
