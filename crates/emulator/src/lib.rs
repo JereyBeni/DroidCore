@@ -353,8 +353,7 @@ mod tests {
 
     #[test]
     fn lifecycle_moves_through_running_paused_and_stopped() {
-        let mut emulator =
-            Emulator::new(EmulatorConfig::default(), TestBackend).unwrap();
+        let mut emulator = Emulator::new(EmulatorConfig::default(), TestBackend).unwrap();
 
         assert_eq!(emulator.state(), EmulatorState::Created);
         emulator.start().unwrap();
@@ -369,8 +368,7 @@ mod tests {
 
     #[test]
     fn invalid_transition_returns_error() {
-        let mut emulator =
-            Emulator::new(EmulatorConfig::default(), TestBackend).unwrap();
+        let mut emulator = Emulator::new(EmulatorConfig::default(), TestBackend).unwrap();
 
         assert!(matches!(
             emulator.pause(),
