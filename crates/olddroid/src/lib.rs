@@ -233,7 +233,7 @@ impl OldDroid {
             return NativeCodePath::GuestNative;
         }
 
-        if abis.iter().any(|abi| matches!(abi, NativeAbi::Armeabi | NativeAbi::ArmeabiV7a))
+        if abis.iter().any(|abi| matches!(*abi, NativeAbi::Armeabi | NativeAbi::ArmeabiV7a))
             && matches!(
                 self.config.guest_architecture,
                 GuestArchitecture::X86 | GuestArchitecture::X86_64
