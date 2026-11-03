@@ -151,7 +151,7 @@ fn extract_package_attribute(xml: &str) -> Option<String> {
     let marker = "package=";
     let value_start = tag.find(marker)? + marker.len();
     let quote = tag.as_bytes().get(value_start).copied()?;
-    if quote != b'\\'' && quote != b'"' {
+    if quote != 39 && quote != 34 {
         return None;
     }
     let value = &tag[value_start + 1..];
