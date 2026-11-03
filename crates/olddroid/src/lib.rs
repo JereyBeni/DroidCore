@@ -1,3 +1,4 @@
+use droidcore_apk::ApkInfo;
 use droidcore_emulator::{EmulatorConfig, ExecutionMode, GuestArchitecture};
 
 pub const MIN_ANDROID_API: u32 = 4;
@@ -77,6 +78,19 @@ pub enum NativeAbi {
     Unknown,
 }
 
+impl NativeAbi {
+    pub fn from_directory_name(name: &str) -> Self {
+        match name {
+            "armeabi" => Self::Armeabi,
+            "armeabi-v7a" => Self::ArmeabiV7a,
+            "arm64-v8a" => Self::Arm64V8a,
+            "x86" => Self::X86,
+            "x86_64" => Self::X86_64,
+            _ => Self::Unknown,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum NativeCodePath {
     NoNativeLibraries,
@@ -139,15 +153,35 @@ impl OldDroidConfig {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LegacyAppDescriptor {
-    pub package_name: String,
+    pub package_name: Option<String>,
     pub min_sdk: Option<u32>,
     pub target_sdk: Option<u32>,
     pub native_abis: Vec<NativeAbi>,
 }
 
+impl LegacyAppDescriptor {
+    pub fn from_apk_info(info: &ApkInfo) -> Self {
+        let mut native_abis = Vec::new();
+
+        for library in &info.native_libraries {
+            let abi = NativeAbi::from_directory_name(&library.abi);
+            if !native_abis.contains(&abi) {
+                native_abis.push(abi);
+            }
+        }
+
+        Self {
+            package_name: info.package_name.clone(),
+            min_sdk: None,
+            target_sdk: None,
+            native_abis,
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CompatibilityPlan {
-    pub package_name: String,
+    pub package_name: Option<String>,
     pub guest_release: AndroidRelease,
     pub guest_api_level: u32,
     pub runtime: AndroidRuntime,
@@ -268,7 +302,7 @@ mod tests {
 
     fn app(min_sdk: u32, abis: Vec<NativeAbi>) -> LegacyAppDescriptor {
         LegacyAppDescriptor {
-            package_name: "org.example.legacygame".to_owned(),
+            package_name: Some("org.example.legacygame".to_owned()),
             min_sdk: Some(min_sdk),
             target_sdk: Some(min_sdk),
             native_abis: abis,
