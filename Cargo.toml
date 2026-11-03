@@ -23,7 +23,6 @@ repository = "https://github.com/JereyBeni/droidcore"
 authors = ["JereyBeni"]
 
 [workspace.dependencies]
-# Internal crates
 droidcore-emulator = { path = "crates/emulator" }
 droidcore-cpu = { path = "crates/cpu" }
 droidcore-memory = { path = "crates/memory" }
@@ -35,10 +34,10 @@ droidcore-apk = { path = "crates/apk" }
 droidcore-compatibility = { path = "crates/compatibility" }
 droidcore-frontend = { path = "crates/frontend" }
 
-# Shared external dependencies (added only when technically necessary)
 serde = { version = "1", features = ["derive"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+zip = { version = "0.6.6", default-features = false, features = ["deflate"] }
 
 [profile.release]
 opt-level = 3
