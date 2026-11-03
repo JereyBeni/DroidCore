@@ -157,7 +157,7 @@ fn inspect_archive(path: &Path, platform: PackagePlatform) -> Result<PackageInfo
     let mut minimum_os_version = None;
 
     for index in 0..archive.len() {
-        let mut entry = archive.by_index(index)?;
+        let entry = archive.by_index(index)?;
         let name = entry.name().to_owned();
         let size = entry.size();
         total_uncompressed_size = total_uncompressed_size.saturating_add(size);
