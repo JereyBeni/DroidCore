@@ -1,6 +1,6 @@
 [package]
 name = "droidcore-apk"
-description = "APK inspection and loading (ZIP, manifest, native libraries)."
+description = "APK archive inspection and package metadata."
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -9,3 +9,4 @@ repository.workspace = true
 authors.workspace = true
 
 [dependencies]
+zip = { workspace = true }
