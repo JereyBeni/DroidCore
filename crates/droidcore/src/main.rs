@@ -1,9 +1,4 @@
-//! DroidCore desktop application entry point.
-//!
-//! Stage 1 of the roadmap: this binary only initializes logging and
-//! reports that the workspace builds. The egui interface arrives in stage 2.
-
-fn main() {
+fn main() -> eframe::Result<()> {
     tracing_subscriber::fmt()
         .with_env_filter(
             tracing_subscriber::EnvFilter::try_from_default_env()
@@ -11,8 +6,17 @@ fn main() {
         )
         .init();
 
-    tracing::info!(
-        version = env!("CARGO_PKG_VERSION"),
-        "DroidCore starting (workspace skeleton, no emulation yet)"
-    );
+    let options = eframe::NativeOptions {
+        viewport: eframe::egui::ViewportBuilder::default()
+            .with_title("DroidCore")
+            .with_inner_size([960.0, 680.0])
+            .with_min_inner_size([720.0, 520.0]),
+        ..Default::default()
+    };
+
+    eframe::run_native(
+        "DroidCore",
+        options,
+        Box::new(|cc| Box::new(droidcore_frontend::DroidCoreApp::new(cc))),
+    )
 }
