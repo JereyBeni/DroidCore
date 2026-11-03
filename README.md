@@ -2,15 +2,16 @@
 
 An original Android game emulator written in Rust, targeting Windows 11.
 
-> **Status: early development (stage 1 — workspace skeleton).**
-> DroidCore does not run Android applications yet. Nothing in this repository
-> emulates Android today, and no compatibility is claimed for any app.
+> **Status: early development.** DroidCore has a desktop APK inspector and
+> initial emulator orchestration. It does not boot Android or run games yet.
 
 ## Goals
 
 - Run Android games on Windows 11 through an original Rust implementation.
 - Support ARM and ARM64 guest code, OpenGL ES graphics, audio, touch
   simulation, and landscape and portrait modes.
+- Preserve support planning for legacy games from Android 1.6 through 5.0
+  through the separate OldDroid compatibility crate.
 - Stay optimized for modest hardware (Intel Core i5-2310, 8 GB DDR3,
   NVIDIA GeForce GT 710, Windows 11).
 
@@ -21,32 +22,32 @@ An original Android game emulator written in Rust, targeting Windows 11.
 
 ## Technology
 
-| Area            | Choice                          |
-|-----------------|---------------------------------|
-| Language        | Rust (stable)                   |
-| Build           | Cargo workspace                 |
-| GUI             | egui                            |
-| Graphics        | wgpu                            |
-| Serialization   | serde                           |
-| Logging         | tracing                         |
-| Testing         | Rust unit and integration tests |
-| CI              | GitHub Actions                  |
+| Area | Choice |
+|---|---|
+| Language | Rust (stable) |
+| Build | Cargo workspace |
+| GUI | egui |
+| Graphics | wgpu (planned rendering backend) |
+| Logging | tracing |
+| Testing | Rust unit and integration tests |
+| CI | GitHub Actions |
 
 ## Workspace layout
 
-| Crate            | Responsibility                                  |
-|------------------|-------------------------------------------------|
-| `droidcore`      | Main application binary                         |
-| `emulator`       | Emulation orchestration                         |
-| `cpu`            | CPU architecture support                        |
-| `memory`         | Memory management                               |
-| `android_runtime`| Android execution environment                   |
-| `graphics`       | Rendering backend                               |
-| `input`          | Keyboard, mouse and touch input                 |
-| `audio`          | Audio subsystem                                 |
-| `apk`            | APK inspection and loading                      |
-| `compatibility`  | Android API compatibility                       |
-| `frontend`       | egui interface                                  |
+| Crate | Responsibility |
+|---|---|
+| `droidcore` | Main application binary |
+| `emulator` | Backend-neutral emulator lifecycle and configuration |
+| `olddroid` | Hybrid compatibility planning for Android 1.6-5.0 |
+| `cpu` | CPU architecture support |
+| `memory` | Guest memory management |
+| `android_runtime` | Android execution environment |
+| `graphics` | Rendering backend and OpenGL ES translation |
+| `input` | Keyboard, mouse and touch input |
+| `audio` | Audio subsystem |
+| `apk` | APK inspection and loading |
+| `compatibility` | Android API compatibility |
+| `frontend` | egui interface |
 
 ## Building
 
@@ -59,6 +60,7 @@ cargo run -p droidcore
 ## Documentation
 
 - [Roadmap](docs/ROADMAP.md)
+- [OldDroid hybrid design](docs/OLDDROID.md)
 - [Technical feasibility notes](docs/FEASIBILITY.md) (pending)
 
 ## Contributing
