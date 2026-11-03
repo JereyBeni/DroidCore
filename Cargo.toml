@@ -3,6 +3,7 @@ resolver = "2"
 members = [
     "crates/droidcore",
     "crates/emulator",
+    "crates/olddroid",
     "crates/cpu",
     "crates/memory",
     "crates/android_runtime",
@@ -24,6 +25,7 @@ authors = ["JereyBeni"]
 
 [workspace.dependencies]
 droidcore-emulator = { path = "crates/emulator" }
+droidcore-olddroid = { path = "crates/olddroid" }
 droidcore-cpu = { path = "crates/cpu" }
 droidcore-memory = { path = "crates/memory" }
 droidcore-android-runtime = { path = "crates/android_runtime" }
